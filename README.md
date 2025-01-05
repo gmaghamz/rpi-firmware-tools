@@ -2,7 +2,7 @@
 
 This package provides a set of utility functions that enable easy modification of raspberry pi firmware files such as:
 
-- /boot/firmware/config.txt and
+- /boot/firmware/config.txt
 - /boot/firmware/cmdline.txt
 
 Typically these files are modified manually by connecting to the PI and using a text editor on the system. That process becomes
@@ -10,7 +10,7 @@ inefficient when configuring multiple PIs.
 
 ## Notes
 
-- The config.txt format seems similar to ini but there are subtle differences.
+- The config.txt format seems similar to .ini format but there are subtle differences.
 - A feature of this package is whitespace, line order, and comments are preserved when parsing and stringifying files in order to keep manual editing easy and convenient.
 - Use at your own risk. Always backup files before modifying and keep a recovery sdcard to boot from just in case.
 
@@ -134,17 +134,17 @@ firmwareConfig.cm4 = firmwareConfig.cm4.filter((configLine) => {
   );
 });
 
-// Bonus example, Comment out an existing property
+// Bonus example: Comment out an existing property.
 const arm64bitPropIndex = firmwareConfig.__global.findIndex((configLine) => {
   return isPropertyConfigLine(configLine) && configLine.property === "arm_64bit";
 });
 
 if (arm64bitPropIndex !== -1) {
   // property was found.
-  const arm64BitProp = firmwareConfig.__global[arm64bitPropIndex] as PropertyConfigLine;
+  const arm64bitProp = firmwareConfig.__global[arm64bitPropIndex] as PropertyConfigLine;
   firmwareConfig.__global[arm64bitPropIndex] = {
     kind: "comment",
-    text: `# ${arm64BitProp.text}`,
+    text: `# ${arm64bitProp.text}`,
   } as CommentConfigLine;
 }
 
