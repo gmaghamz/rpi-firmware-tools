@@ -3,31 +3,44 @@ import _ from "lodash";
 const SPECIAL_FILTER_GLOBAL = "__global";
 const SPECIAL_FILTER_ALL = "all";
 
+const CONFIG_LINE_KIND_EMPTY = "empty";
+const CONFIG_LINE_KIND_COMMENT = "comment";
+const CONFIG_LINE_KIND_PROPERTY = "property";
+const CONFIG_LINE_KIND_FILTER = "filter";
+
 export interface ConfigLine {
   text: string;
 }
 
 export interface EmptyConfigLine extends ConfigLine {
-  kind: "empty";
+  kind: typeof CONFIG_LINE_KIND_EMPTY;
 }
 
 export interface CommentConfigLine extends ConfigLine {
-  kind: "comment";
+  kind: typeof CONFIG_LINE_KIND_COMMENT;
 }
 
 export interface PropertyConfigLine extends ConfigLine {
-  kind: "property";
+  kind: typeof CONFIG_LINE_KIND_PROPERTY;
   property: string;
   value: string;
 }
 
 interface FilterConfigLine extends ConfigLine {
-  kind: "filter";
+  kind: typeof CONFIG_LINE_KIND_FILTER;
   filter: string;
 }
 
+export function isCommentConfigLine(obj: ConfigLine): obj is CommentConfigLine {
+  return (obj as any).kind === CONFIG_LINE_KIND_COMMENT;
+}
+
+export function isPropertyConfigLine(obj: ConfigLine): obj is PropertyConfigLine {
+  return (obj as any).kind === CONFIG_LINE_KIND_PROPERTY;
+}
+
 function isFilterConfigLine(obj: ConfigLine): obj is FilterConfigLine {
-  return (obj as any).kind === "filter";
+  return (obj as any).kind === CONFIG_LINE_KIND_FILTER;
 }
 
 export interface FirmwareConfig {
@@ -167,7 +180,7 @@ export function configStringify(config: FirmwareConfig): string {
 
   _.forEach(filters, (filterLines, filter) => {
     configLines.push({
-      kind: "filter",
+      kind: CONFIG_LINE_KIND_FILTER,
       filter,
       text: `[${filter}]`,
     } as FilterConfigLine);
@@ -176,7 +189,7 @@ export function configStringify(config: FirmwareConfig): string {
 
   if (all) {
     configLines.push({
-      kind: "filter",
+      kind: CONFIG_LINE_KIND_FILTER,
       filter: SPECIAL_FILTER_ALL,
       text: `[${SPECIAL_FILTER_ALL}]`,
     } as FilterConfigLine);
